@@ -1,0 +1,12 @@
+# macOS system files
+.DS_Store
+._*
+
+# TIF files (browsers cannot display, PNG versions are used instead)
+*.tif
+*.tiff
+
+# Editor temporary files
+*~
+*.swp
+*.swo
