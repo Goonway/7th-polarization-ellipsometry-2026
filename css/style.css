@@ -1522,6 +1522,11 @@ ul {
     margin-bottom: 36px;
 }
 
+.sponsor-tier-header {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
 .sponsor-tier-label {
     text-align: center;
     font-size: 16px;
