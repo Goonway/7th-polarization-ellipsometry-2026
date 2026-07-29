@@ -10,3 +10,6 @@
 *~
 *.swp
 *.swo
+
+# Image backup (pre-compression)
+images-backup/
