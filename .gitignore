@@ -13,3 +13,6 @@
 
 # Image backup (pre-compression)
 images-backup/
+
+# CSS dev backup (minified version is used in production)
+css/style.dev.css
