@@ -3,8 +3,11 @@
 网站更新辅助脚本 - 在添加新图片或修改内容后运行此脚本
 功能：
 1. 为新增 img 标签自动添加 loading="lazy"
-2. 将新增的相对路径资源链接(css/js/images/downloads)替换为 jsDelivr CDN 绝对路径
+2. 将新增的相对路径资源链接(css/js/images)替换为 jsDelivr CDN 绝对路径
 3. 显示需要清理 jsDelivr CDN 缓存的文件列表
+
+注意：downloads/ 目录不替换为 CDN 路径，因为 jsDelivr 禁止 .docx 等文件类型。
+     下载文件使用相对路径，由 GitHub Pages 直接提供。
 
 使用方法：
     python3 update_cdn.py
@@ -42,11 +45,11 @@ def main():
         lazy_count = content.count('loading="lazy"') - original.count('loading="lazy"')
 
         # 2. 将相对路径替换为 CDN 绝对路径（只处理未被替换的新增内容）
+        # 注意：downloads/ 不替换为 CDN，因为 jsDelivr 禁止 .docx 等文件类型
         patterns = [
             (r'href="css/', f'href="{CDN}/css/'),
             (r'src="js/', f'src="{CDN}/js/'),
             (r'src="images/', f'src="{CDN}/images/'),
-            (r'href="downloads/', f'href="{CDN}/downloads/'),
         ]
         cdn_count = 0
         for pattern, replacement in patterns:
