@@ -236,6 +236,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (!overlay || !openBtn) return;
 
+    var formSubmitted = false;
+    var iframeLoadCount = 0;
+    function showSuccess() {
+        if (formSubmitted) return;
+        formSubmitted = true;
+        var iframeEl = document.getElementById('tally-iframe');
+        var successEl = document.getElementById('tally-success');
+        if (iframeEl) iframeEl.style.display = 'none';
+        if (successEl) successEl.style.display = 'flex';
+        setTimeout(function() {
+            closeModal();
+            setTimeout(function() {
+                if (iframeEl) iframeEl.style.display = '';
+                if (successEl) successEl.style.display = 'none';
+                formSubmitted = false;
+            }, 300);
+        }, 3000);
+    }
+
     function openModal() {
         overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -243,6 +262,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!loaded && iframe) {
             // 直接设置 iframe src，确保表单加载
             iframe.src = iframe.getAttribute('data-tally-src');
+
+            // 监听 iframe 加载事件：第二次加载 = 表单提交后的感谢页面
+            iframe.addEventListener('load', function() {
+                iframeLoadCount++;
+                if (iframeLoadCount > 1) {
+                    showSuccess();
+                }
+            });
 
             // 加载 Tally embed.js 脚本（用于动态高度调整）
             var s = document.createElement('script');
@@ -285,25 +312,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 监听 Tally 表单提交事件，显示自定义成功提示后关闭弹窗
     window.addEventListener('message', function(e) {
-        if (e.data) {
-            if (e.data.event === 'Tally.FormSubmitted' ||
-                e.data.event === 'tally:form-submitted' ||
-                (e.data.type === 'tally' && e.data.action === 'submit')) {
-                // 隐藏 iframe，显示成功提示
-                var iframe = document.getElementById('tally-iframe');
-                var success = document.getElementById('tally-success');
-                if (iframe) iframe.style.display = 'none';
-                if (success) success.style.display = 'flex';
-                // 3 秒后关闭弹窗
-                setTimeout(function() {
-                    closeModal();
-                    // 重置状态，下次打开时显示表单
-                    setTimeout(function() {
-                        if (iframe) iframe.style.display = '';
-                        if (success) success.style.display = 'none';
-                    }, 300);
-                }, 3000);
+        if (formSubmitted) return;
+        var data = e.data;
+        // Tally 可能发送 JSON 字符串而非对象
+        if (typeof data === 'string') {
+            try { data = JSON.parse(data); } catch(err) { return; }
+        }
+        if (!data) return;
+
+        // 检测多种可能的提交事件格式
+        var isSubmitted = false;
+        if (data.event === 'Tally.FormSubmitted' ||
+            data.event === 'tally:form-submitted' ||
+            data.event === 'Tally.PageView' && data.name === 'Thank you page' ||
+            (data.type === 'tally' && data.action === 'submit')) {
+            isSubmitted = true;
+        }
+        // 宽泛检测：包含 tally 和 submit/success 关键词
+        if (!isSubmitted && typeof data === 'object') {
+            var dataStr = JSON.stringify(data).toLowerCase();
+            if (dataStr.indexOf('tally') >= 0 && (dataStr.indexOf('submit') >= 0 || dataStr.indexOf('success') >= 0 || dataStr.indexOf('thank') >= 0)) {
+                isSubmitted = true;
             }
+        }
+
+        if (isSubmitted) {
+            showSuccess();
         }
     });
 });
