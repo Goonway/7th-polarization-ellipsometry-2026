@@ -105,10 +105,9 @@
             <div class="cfp-instructions">
                 <h4>📌 投稿指南</h4>
                 <ul>
-                    <li>投稿方式：请点击下方<strong>"点击上传摘要"</strong>按钮，在线填写并上传摘要</li>
+                    <li>截稿日期已于 <strong>2026年8月20日</strong> 截止，摘要收集通道已关闭</li>
                     <li>摘要格式：中文或英文，一页 A4 纸以内，包含标题、作者、单位、正文及主要参考文献</li>
                     <li>摘要模板：请从"<a href="download.html">下载中心</a>"获取 Word 模板</li>
-                    <li>截稿日期：<strong>2026年8月20日</strong></li>
                     <li>录用通知：摘要评审后将另行通知</li>
                     <li>全文提交：录用后可提交全文（可选），全文将推荐至合作期刊发表</li>
                 </ul>
@@ -175,7 +174,7 @@
 
 <button class="back-to-top" aria-label="返回顶部">↑</button>
 
-<!-- Tally 摘要上传弹窗 -->
+<!-- 摘要上传弹窗（已过期） -->
 <div id="abstract-modal-overlay" class="tally-modal-overlay">
     <div id="abstract-modal" class="tally-modal">
         <div class="tally-modal-header">
@@ -183,83 +182,29 @@
             <button id="abstract-modal-close" class="tally-modal-close" aria-label="关闭">&times;</button>
         </div>
         <div class="tally-modal-body">
-            <iframe
-                id="abstract-iframe"
-                class="form-embed"
-                data-tally-src="https://tally.so/embed/QKpeZ7?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
-                loading="lazy"
-                width="100%"
-                height="2986"
-                frameborder="0"
-                marginheight="0"
-                marginwidth="0"
-                title="摘要收集">
-            </iframe>
-            <div id="tally-success" class="tally-success" style="display:none;">
-                <div class="tally-success-icon">✅</div>
-                <div class="tally-success-title">摘要上传成功！</div>
-                <div class="tally-success-desc">我们已收到您的摘要，请关注邮箱获取后续通知。<br>弹窗将在 3 秒后自动关闭……</div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center;gap:16px;">
+                <div style="font-size:48px;">📭</div>
+                <div style="font-size:20px;font-weight:600;color:var(--text-primary);">摘要收集已结束</div>
+                <div style="font-size:15px;line-height:1.8;color:var(--text-secondary);max-width:420px;">
+                    本届大会的摘要提交截止日期已过，不再接收新的摘要。<br>如需了解后续事宜，请联系会务组邮箱：<a href="mailto:dingjh@tju.edu.cn" style="color:var(--primary);">dingjh@tju.edu.cn</a>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-// Tally 摘要上传弹窗逻辑
+// 摘要上传弹窗逻辑（已过期，仅显示提示）
 document.addEventListener('DOMContentLoaded', function() {
     var overlay = document.getElementById('abstract-modal-overlay');
     var openBtn = document.getElementById('open-abstract-btn');
     var closeBtn = document.getElementById('abstract-modal-close');
-    var iframe = document.getElementById('abstract-iframe');
-    var loaded = false;
 
     if (!overlay || !openBtn) return;
-
-    var formSubmitted = false;
-    var iframeLoadCount = 0;
-    function showSuccess() {
-        if (formSubmitted) return;
-        formSubmitted = true;
-        var iframeEl = document.getElementById('abstract-iframe');
-        var successEl = document.getElementById('tally-success');
-        if (iframeEl) iframeEl.style.display = 'none';
-        if (successEl) successEl.style.display = 'flex';
-        setTimeout(function() {
-            closeModal();
-            setTimeout(function() {
-                if (iframeEl) iframeEl.style.display = '';
-                if (successEl) successEl.style.display = 'none';
-                formSubmitted = false;
-            }, 300);
-        }, 5000);
-    }
 
     function openModal() {
         overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
-
-        if (!loaded && iframe) {
-            iframe.src = iframe.getAttribute('data-tally-src');
-
-            // 监听 iframe 加载事件：第二次加载 = 表单提交后的感谢页面
-            iframe.addEventListener('load', function() {
-                iframeLoadCount++;
-                if (iframeLoadCount > 1) {
-                    showSuccess();
-                }
-            });
-
-            var s = document.createElement('script');
-            s.src = 'https://tally.so/widgets/embed.js';
-            s.onload = function() {
-                if ('undefined' != typeof Tally) {
-                    Tally.loadEmbeds();
-                }
-            };
-            document.body.appendChild(s);
-
-            loaded = true;
-        }
     }
 
     function closeModal() {
@@ -282,33 +227,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && overlay.classList.contains('active')) {
             closeModal();
-        }
-    });
-
-    window.addEventListener('message', function(e) {
-        if (formSubmitted) return;
-        var data = e.data;
-        if (typeof data === 'string') {
-            try { data = JSON.parse(data); } catch(err) { return; }
-        }
-        if (!data) return;
-
-        var isSubmitted = false;
-        if (data.event === 'Tally.FormSubmitted' ||
-            data.event === 'tally:form-submitted' ||
-            data.event === 'Tally.PageView' && data.name === 'Thank you page' ||
-            (data.type === 'tally' && data.action === 'submit')) {
-            isSubmitted = true;
-        }
-        if (!isSubmitted && typeof data === 'object') {
-            var dataStr = JSON.stringify(data).toLowerCase();
-            if (dataStr.indexOf('tally') >= 0 && (dataStr.indexOf('submit') >= 0 || dataStr.indexOf('success') >= 0 || dataStr.indexOf('thank') >= 0)) {
-                isSubmitted = true;
-            }
-        }
-
-        if (isSubmitted) {
-            showSuccess();
         }
     });
 });
