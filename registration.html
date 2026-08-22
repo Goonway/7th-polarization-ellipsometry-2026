@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="第七届全国偏振与椭偏测量大会 - 注册缴费">
     <title>注册缴费 - 第七届全国偏振与椭偏测量大会</title>
-    <link rel="preconnect" href="https://tally.so">
-    <link rel="dns-prefetch" href="https://tally.so">
     <link rel="preload" href="https://cdn.jsdelivr.net/gh/Goonway/7th-polarization-ellipsometry-2026@main/css/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Goonway/7th-polarization-ellipsometry-2026@main/css/style.css"></noscript>
 </head>
@@ -62,8 +60,8 @@
             <div style="text-align: center; margin-bottom: 40px;">
                 <h3 style="font-size: 18px; margin-bottom: 8px;">在线注册</h3>
                 <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 24px;">
-                    点击下方按钮填写注册表单，提交后将自动返回本页面<br>
-                    （如您在7.31日之前已经通过邮箱投稿，不再需要重复注册）
+                    会议注册截止日期已过，在线注册通道已关闭<br>
+                    如需了解后续事宜，请联系会务组邮箱：dingjh@tju.edu.cn
                 </p>
                 <button id="open-tally-btn" class="btn btn-primary" style="font-size: 22px; padding: 24px 80px; border-radius: 12px;">
                     📝 点击在线注册
@@ -196,93 +194,36 @@
 
 <button class="back-to-top" aria-label="返回顶部">↑</button>
 
-<!-- Tally 注册表单弹窗 -->
+<!-- 注册截止提示弹窗 -->
 <div id="tally-modal-overlay" class="tally-modal-overlay">
     <div id="tally-modal" class="tally-modal">
         <div class="tally-modal-header">
-            <span class="tally-modal-title">第七届全国偏振与椭偏测量大会 - 在线注册</span>
+            <span class="tally-modal-title">注册截止通知</span>
             <button id="tally-modal-close" class="tally-modal-close" aria-label="关闭">&times;</button>
         </div>
-        <div class="tally-modal-body">
-            <iframe
-                id="tally-iframe"
-                class="form-embed"
-                data-tally-src="https://tally.so/embed/LZB7Pl?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
-                loading="lazy"
-                width="100%"
-                height="2986"
-                frameborder="0"
-                marginheight="0"
-                marginwidth="0"
-                title="第七届全国偏振与椭偏测量大会">
-            </iframe>
-            <div id="tally-success" class="tally-success" style="display:none;">
-                <div class="tally-success-icon">✅</div>
-                <div class="tally-success-title">注册信息提交成功！</div>
-                <div class="tally-success-desc">我们已收到您的注册信息，请关注邮箱获取后续通知。<br>弹窗将在 3 秒后自动关闭……</div>
+        <div class="tally-modal-body" style="text-align:center;padding:48px 32px;">
+            <div style="font-size:48px;margin-bottom:20px;">🚫</div>
+            <div style="font-size:22px;font-weight:700;color:var(--text-primary);margin-bottom:16px;">会议注册已截止</div>
+            <div style="font-size:15px;line-height:2;color:var(--text-secondary);">
+                本届大会的会议注册截止日期已过，网站中不再接收新的注册。<br>
+                如需了解后续事宜，请联系会务组邮箱：<br>
+                <a href="mailto:dingjh@tju.edu.cn" style="color:var(--primary);font-weight:600;">dingjh@tju.edu.cn</a>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-// Tally 表单弹窗逻辑
 document.addEventListener('DOMContentLoaded', function() {
     var overlay = document.getElementById('tally-modal-overlay');
     var openBtn = document.getElementById('open-tally-btn');
     var closeBtn = document.getElementById('tally-modal-close');
-    var iframe = document.getElementById('tally-iframe');
-    var loaded = false;
 
     if (!overlay || !openBtn) return;
-
-    var formSubmitted = false;
-    var iframeLoadCount = 0;
-    function showSuccess() {
-        if (formSubmitted) return;
-        formSubmitted = true;
-        var iframeEl = document.getElementById('tally-iframe');
-        var successEl = document.getElementById('tally-success');
-        if (iframeEl) iframeEl.style.display = 'none';
-        if (successEl) successEl.style.display = 'flex';
-        setTimeout(function() {
-            closeModal();
-            setTimeout(function() {
-                if (iframeEl) iframeEl.style.display = '';
-                if (successEl) successEl.style.display = 'none';
-                formSubmitted = false;
-            }, 300);
-        }, 5000);
-    }
 
     function openModal() {
         overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
-
-        if (!loaded && iframe) {
-            // 直接设置 iframe src，确保表单加载
-            iframe.src = iframe.getAttribute('data-tally-src');
-
-            // 监听 iframe 加载事件：第二次加载 = 表单提交后的感谢页面
-            iframe.addEventListener('load', function() {
-                iframeLoadCount++;
-                if (iframeLoadCount > 1) {
-                    showSuccess();
-                }
-            });
-
-            // 加载 Tally embed.js 脚本（用于动态高度调整）
-            var s = document.createElement('script');
-            s.src = 'https://tally.so/widgets/embed.js';
-            s.onload = function() {
-                if ('undefined' != typeof Tally) {
-                    Tally.loadEmbeds();
-                }
-            };
-            document.body.appendChild(s);
-
-            loaded = true;
-        }
     }
 
     function closeModal() {
@@ -296,48 +237,15 @@ document.addEventListener('DOMContentLoaded', function() {
         closeBtn.addEventListener('click', closeModal);
     }
 
-    // 点击遮罩区域关闭
     overlay.addEventListener('click', function(e) {
         if (e.target === overlay) {
             closeModal();
         }
     });
 
-    // ESC 键关闭
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && overlay.classList.contains('active')) {
             closeModal();
-        }
-    });
-
-    // 监听 Tally 表单提交事件，显示自定义成功提示后关闭弹窗
-    window.addEventListener('message', function(e) {
-        if (formSubmitted) return;
-        var data = e.data;
-        // Tally 可能发送 JSON 字符串而非对象
-        if (typeof data === 'string') {
-            try { data = JSON.parse(data); } catch(err) { return; }
-        }
-        if (!data) return;
-
-        // 检测多种可能的提交事件格式
-        var isSubmitted = false;
-        if (data.event === 'Tally.FormSubmitted' ||
-            data.event === 'tally:form-submitted' ||
-            data.event === 'Tally.PageView' && data.name === 'Thank you page' ||
-            (data.type === 'tally' && data.action === 'submit')) {
-            isSubmitted = true;
-        }
-        // 宽泛检测：包含 tally 和 submit/success 关键词
-        if (!isSubmitted && typeof data === 'object') {
-            var dataStr = JSON.stringify(data).toLowerCase();
-            if (dataStr.indexOf('tally') >= 0 && (dataStr.indexOf('submit') >= 0 || dataStr.indexOf('success') >= 0 || dataStr.indexOf('thank') >= 0)) {
-                isSubmitted = true;
-            }
-        }
-
-        if (isSubmitted) {
-            showSuccess();
         }
     });
 });
